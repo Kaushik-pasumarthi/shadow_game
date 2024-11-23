@@ -24,7 +24,8 @@ def obstacle_movement(obstacle_list):
 def collisions(player,obstacles):
   if obstacles:
     for obstacle_rect in obstacles:
-      if player.colliderect(obstacle_rect):return False
+      if player.colliderect(obstacle_rect):
+        return False
   return True      
 
 def player_animation():
@@ -35,6 +36,24 @@ def player_animation():
     player_index+=0.1
     if player_index>=len(player_walk):player_index=0
     player_surf=player_walk[int(player_index)]
+
+
+def spawn_falling_enemy():
+  x_pos = randint(50, 750)
+  return falling_enemy_surface.get_rect(midtop=(x_pos, 0))
+
+def move_falling_enemies(enemy_list):
+  if enemy_list:
+    for enemy_rect in enemy_list:
+      enemy_rect.y += 2  # Adjust falling speed here
+    enemy_list = [enemy for enemy in enemy_list if enemy.top < 400]
+  return enemy_list
+
+def check_falling_enemy_collision(player, enemies):
+  for enemy_rect in enemies:
+    if player.colliderect(enemy_rect):
+      return False  # Game over
+  return True
 
 
 
@@ -76,22 +95,26 @@ fly_frames=[fly_1,fly_2]
 fly_frame_index=0
 fly_surf=fly_frames[fly_frame_index]
 
+falling_enemies = []
+falling_enemy_surface = pg.image.load('graphics/grenade.png').convert_alpha()
+falling_enemy_surface = pg.transform.scale(falling_enemy_surface, (30, 30))
+
 obstacle_rect_list=[]
 
 player_walk_1=pg.image.load('graphics/walk1.png').convert_alpha()
-player_walk_1 = pg.transform.scale(player_walk_1, (60, 80))
+player_walk_1 = pg.transform.scale(player_walk_1, (60, 70))
 player_walk_2=pg.image.load('graphics/walk2.png').convert_alpha()
-player_walk_2 = pg.transform.scale(player_walk_2, (60, 80))
+player_walk_2 = pg.transform.scale(player_walk_2, (60, 70))
 player_walk_3=pg.image.load('graphics/walk3.png').convert_alpha()
-player_walk_3 = pg.transform.scale(player_walk_3, (60, 80))
+player_walk_3 = pg.transform.scale(player_walk_3, (60, 70))
 player_walk_4=pg.image.load('graphics/walk4.png').convert_alpha()
-player_walk_4= pg.transform.scale(player_walk_4, (60, 80))
+player_walk_4= pg.transform.scale(player_walk_4, (60, 70))
 
 
 player_walk=[player_walk_1,player_walk_2,player_walk_3,player_walk_4]
 player_index=0
 player_jump=pg.image.load('graphics/jump.png').convert_alpha()
-player_jump= pg.transform.scale(player_jump, (60, 80))
+player_jump= pg.transform.scale(player_jump, (60, 70))
 
 player_surf=player_walk[player_index]
 
@@ -122,8 +145,16 @@ pg.time.set_timer(snail_animation_timer,500)
 fly_animation_timer=pg.USEREVENT+3
 pg.time.set_timer(fly_animation_timer,200)
 
+
+falling_enemy_timer = pg.USEREVENT + 3
+pg.time.set_timer(falling_enemy_timer, 2200)
+
 player_speed=5
 bg_speed=2
+is_small = False  # Flag to check if the player is small
+shrink_start_time = 0  # To track when shrinking started
+shrink_duration = 1000  # 1 second in milliseconds
+
 
 while True:
   for event in pg.event.get():
@@ -133,12 +164,12 @@ while True:
     if game_active:
       if event.type==pg.MOUSEBUTTONDOWN and player_rect.bottom>=300 :
         if player_rect.collidepoint(event.pos):
-          player_gravity=-20
+          player_gravity=-18
 
 
       if event.type==pg.KEYDOWN:
         if event.key==pg.K_UP and player_rect.bottom>=300:
-          player_gravity=-20
+          player_gravity=-18
       
       if event.type==obstacle_timer :
         if randint(0,2):
@@ -154,6 +185,8 @@ while True:
         if fly_frame_index==0:fly_frame_index=1
         else:fly_frame_index=0
         fly_surf=fly_frames[fly_frame_index]
+      if event.type == falling_enemy_timer:
+        falling_enemies.append(spawn_falling_enemy())
 
 
 
@@ -161,7 +194,11 @@ while True:
       if event.type==pg.KEYDOWN and event.key==pg.K_SPACE:
         game_active=True
         # snail_rect.left=800
+        falling_enemies.clear()
+
         start_time=int(pg.time.get_ticks()/1000)
+        obstacle_rect_list.clear()
+
       
 
     
@@ -189,6 +226,43 @@ while True:
 
 
 
+  # if game_active:
+  #   keys = pg.key.get_pressed()
+  #   if keys[pg.K_DOWN] and not is_small:
+  #     # Shrink the player and set the timer
+  #     is_small = True
+  #     shrink_start_time = pg.time.get_ticks()
+
+  #     # Get current dimensions
+  #     current_width = player_surf.get_width()
+  #     current_height = player_surf.get_height()
+
+  #     # Shrink dimensions
+  #     new_width = current_width // 2
+  #     new_height = current_height // 2
+
+  #     # Update player_walk frames
+  #     player_walk = [pg.transform.scale(frame, (frame.get_width() // 2, frame.get_height() // 2)) for frame in player_walk]
+
+  #     # Update player_surf and repositionzz
+  #     player_surf = pg.transform.scale(player_surf, (new_width, new_height))
+  #     player_rect = player_surf.get_rect(midbottom=(player_rect.centerx, 300))  # Adjust bottom position to stay at 300
+
+  #   # Reset size after timer
+  #   if is_small and pg.time.get_ticks() - shrink_start_time > shrink_duration:
+  #     is_small = False
+
+  #     # Restore original dimensions
+  #     original_width = player_surf.get_width() * 2
+  #     original_height = player_surf.get_height() * 2
+
+  #     # Update player_walk frames
+  #     player_walk = [pg.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2)) for frame in player_walk]
+
+  #     # Update player_surf and reposition
+  #     player_surf = pg.transform.scale(player_surf, (original_width, original_height))
+  #     player_rect = player_surf.get_rect(midbottom=(player_rect.centerx, 300))  # Adjust bottom position to stay at 300
+
 
 
   if game_active:
@@ -214,9 +288,17 @@ while True:
     stuff.blit(player_surf,player_rect)
 
     obstacle_rect_list=obstacle_movement(obstacle_rect_list)
-
-
     game_active=collisions(player_rect,obstacle_rect_list)
+
+  if game_active:
+    falling_enemies = move_falling_enemies(falling_enemies)
+    for enemy_rect in falling_enemies:
+      stuff.blit(falling_enemy_surface, enemy_rect)
+
+      # Collision with falling enemies
+      game_active = check_falling_enemy_collision(player_rect, falling_enemies)
+
+
     # if snail_rect.colliderect(player_rect):
     #   game_active=False
     # keys=pg.key.get_pressed()
