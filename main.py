@@ -142,7 +142,7 @@ pg.time.set_timer(obstacle_timer,1500)
 snail_animation_timer=pg.USEREVENT+2
 pg.time.set_timer(snail_animation_timer,500)
 
-fly_animation_timer=pg.USEREVENT+3
+fly_animation_timer=pg.USEREVENT+2 #originaly 3
 pg.time.set_timer(fly_animation_timer,200)
 
 
