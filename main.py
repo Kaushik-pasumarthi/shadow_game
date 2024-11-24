@@ -226,42 +226,42 @@ while True:
 
 
 
-  # if game_active:
-  #   keys = pg.key.get_pressed()
-  #   if keys[pg.K_DOWN] and not is_small:
-  #     # Shrink the player and set the timer
-  #     is_small = True
-  #     shrink_start_time = pg.time.get_ticks()
+  if game_active:
+    keys = pg.key.get_pressed()
+    if keys[pg.K_DOWN] and not is_small:
+      # Shrink the player and set the timer
+      is_small = True
+      shrink_start_time = pg.time.get_ticks()
 
-  #     # Get current dimensions
-  #     current_width = player_surf.get_width()
-  #     current_height = player_surf.get_height()
+      # Get current dimensions
+      current_width = player_surf.get_width()
+      current_height = player_surf.get_height()
 
-  #     # Shrink dimensions
-  #     new_width = current_width // 2
-  #     new_height = current_height // 2
+      # Shrink dimensions
+      new_width = current_width // 2
+      new_height = current_height // 2
 
-  #     # Update player_walk frames
-  #     player_walk = [pg.transform.scale(frame, (frame.get_width() // 2, frame.get_height() // 2)) for frame in player_walk]
+      # Update player_walk frames
+      player_walk = [pg.transform.scale(frame, (frame.get_width() // 2, frame.get_height() // 2)) for frame in player_walk]
 
-  #     # Update player_surf and repositionzz
-  #     player_surf = pg.transform.scale(player_surf, (new_width, new_height))
-  #     player_rect = player_surf.get_rect(midbottom=(player_rect.centerx, 300))  # Adjust bottom position to stay at 300
+      # Update player_surf and repositionzz
+      player_surf = pg.transform.scale(player_surf, (new_width, new_height))
+      player_rect = player_surf.get_rect(midbottom=(player_rect.centerx, 300))  # Adjust bottom position to stay at 300
 
-  #   # Reset size after timer
-  #   if is_small and pg.time.get_ticks() - shrink_start_time > shrink_duration:
-  #     is_small = False
+    # Reset size after timer
+    if is_small and pg.time.get_ticks() - shrink_start_time > shrink_duration:
+      is_small = False
 
-  #     # Restore original dimensions
-  #     original_width = player_surf.get_width() * 2
-  #     original_height = player_surf.get_height() * 2
+      # Restore original dimensions
+      original_width = player_surf.get_width() * 2
+      original_height = player_surf.get_height() * 2
 
-  #     # Update player_walk frames
-  #     player_walk = [pg.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2)) for frame in player_walk]
+      # Update player_walk frames
+      player_walk = [pg.transform.scale(frame, (frame.get_width() * 2, frame.get_height() * 2)) for frame in player_walk]
 
-  #     # Update player_surf and reposition
-  #     player_surf = pg.transform.scale(player_surf, (original_width, original_height))
-  #     player_rect = player_surf.get_rect(midbottom=(player_rect.centerx, 300))  # Adjust bottom position to stay at 300
+      # Update player_surf and reposition
+      player_surf = pg.transform.scale(player_surf, (original_width, original_height))
+      player_rect = player_surf.get_rect(midbottom=(player_rect.centerx, 300))  # Adjust bottom position to stay at 300
 
 
 
