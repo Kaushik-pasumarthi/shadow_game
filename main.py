@@ -313,7 +313,7 @@ while True:
     stuff.blit(game_name,game_name_rect)
     game_message = test_font.render(f'Press Space to play again!!', False, 'black')
     game_message_rect = game_message.get_rect(center=(410, 320))  # Adjust position for first line
-    score_message = test_font.render(f'Your Scour: {current_time}', False, 'black')
+    score_message = test_font.render(f'Your Score: {current_time}', False, 'black')
     score_message_rect = score_message.get_rect(center=(400, 360))  # Position for the score
     stuff.blit(game_message, game_message_rect)
     stuff.blit(score_message, score_message_rect)
